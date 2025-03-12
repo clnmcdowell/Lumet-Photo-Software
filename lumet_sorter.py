@@ -8,7 +8,14 @@ from PIL import Image, ImageTk
 root = tk.Tk()
 root.title('Lumet Sorter')
 root.withdraw()
+
+# Supported image extensions
 image_extensions = (".jpg", ".jpeg", ".png", ".gif", ".bmp", ".tiff", ".tif")
+
+# Global variables to track images
+current_index = 0
+images = []
+selected_folder = ""
 
 # Function to select folder of photos to sort
 def select_folder():
@@ -46,6 +53,27 @@ def display_image(image_path):
     root.image_label.config(image=photo)
     root.image_label.image = photo # Keep a reference to avoid garbage collection
 
+def sort_image(destination_folder):
+    global current_index
+    source = os.path.join(selected_folder, "Unsorted", images[current_index])
+    destination = os.path.join(selected_folder, destination_folder, images[current_index])
+    shutil.move(source, destination)
+
+    # Remove image from list and display next image
+    images.pop(current_index)
+    if current_index < len(images):
+        image_path = os.path.join(selected_folder, "Unsorted", images[current_index])
+        display_image(image_path)
+    else:
+        root.quit()
+
+# Function to bind keys to sorting actions
+def bind_keys():
+    root.bind("<Left>", lambda event: sort_image("No"))      # Left arrow → No
+    root.bind("<Right>", lambda event: sort_image("Yes"))    # Right arrow → Yes
+    root.bind("<Up>", lambda event: sort_image("Maybe"))     # Up arrow → Maybe
+    root.bind("<Down>", lambda event: sort_image("Maybe"))   # Down arrow → Maybe
+
 # Main execution
 if __name__ == "__main__":
     # Select folder of photos to sort
@@ -57,10 +85,10 @@ if __name__ == "__main__":
         unsorted_folder = os.path.join(selected_folder, "Unsorted")
         images = [f for f in os.listdir(unsorted_folder) if f.lower().endswith(image_extensions)]
 
-        # Display images one by one for sorting
+        # Display first image and begin sort loop
         if images:
-            image_path = os.path.join(unsorted_folder, images[0])
-            display_image(image_path)
+            display_image(os.path.join(unsorted_folder, images[current_index]))
+            bind_keys()
 
     # Start the main event loop
     root.mainloop()
