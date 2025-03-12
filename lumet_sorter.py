@@ -2,13 +2,15 @@ import tkinter as tk
 from tkinter import filedialog
 import os
 import shutil
+from PI import Image, ImageTk
+
+# Create a global window
+root = tk.Tk()
+root.title('Lumet Sorter')
+root.withdraw()
 
 # Function to select folder of photos to sort
 def select_folder():
-    root = tk.Tk()
-    root.title('Lumet Sorter')
-    root.withdraw()
-
     # Ask user to select folder of photos to sort
     folder_path = filedialog.askdirectory(title = "Select folder of photos to sort")
     print("Selected Folder: " + folder_path)
@@ -29,4 +31,3 @@ def setup_folders(folder_path):
             source = os.path.join(folder_path, file)
             destination = os.path.join(folder_path, "Unsorted", file)
             shutil.move(source, destination)
-
