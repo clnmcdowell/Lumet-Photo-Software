@@ -10,7 +10,7 @@ root.title('Lumet Sorter')
 root.withdraw()
 
 # Supported image extensions
-image_extensions = (".jpg", ".jpeg", ".png", ".gif", ".bmp", ".tiff", ".tif")
+image_extensions = (".jpg", ".jpeg", ".png", ".gif", ".bmp", ".tiff", ".tif", ".webp", ".ppm", ".pgm", ".pbm", ".pnm", ".sr", ".ras", ".jpe", ".jp2", ".j2k", ".jpf", ".jpx", ".jpm", ".mj2", ".svg", ".svgz", ".ico", ".cur", ".ani", ".tif", ".tiff", ".jfif", ".pjpeg", ".pjp")
 
 # Global variables to track images
 current_index = 0
