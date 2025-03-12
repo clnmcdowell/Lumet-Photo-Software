@@ -34,13 +34,18 @@ def setup_folders(folder_path):
 
     # Move images to Unsorted folder
     for file in os.listdir(folder_path):
-        if file.endswith(image_extensions):
+        if file.lower().endswith(image_extensions):
             source = os.path.join(folder_path, file)
             destination = os.path.join(folder_path, "Unsorted", file)
             shutil.move(source, destination)
 
 # Function to display image
 def display_image(image_path):
+    # Ensure image exists
+    if not image_path or not os.path.exists(image_path):
+        root.destroy()
+        return
+    
     image = Image.open(image_path)
     photo = ImageTk.PhotoImage(image)
 
@@ -60,12 +65,13 @@ def sort_image(destination_folder):
     shutil.move(source, destination)
 
     # Remove image from list and display next image
-    images.pop(current_index)
+    if images:
+        images.pop(current_index)
     if current_index < len(images):
         image_path = os.path.join(selected_folder, "Unsorted", images[current_index])
         display_image(image_path)
     else:
-        root.quit()
+        root.destroy()
 
 # Function to bind keys to sorting actions
 def bind_keys():
