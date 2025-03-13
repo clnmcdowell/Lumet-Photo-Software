@@ -78,6 +78,11 @@ def sort_image(destination_folder):
         image_path = os.path.join(selected_folder, "unsorted", images[current_index])
         display_image(image_path)
     else:
+        # No more images to sort: Delete unsorted folder if empty and exit
+        unsorted_folder = os.path.join(selected_folder, "unsorted")
+        if os.path.exists(unsorted_folder) and not os.listdir(unsorted_folder):
+            os.rmdir(unsorted_folder)
+            
         root.destroy()
 
 # Function to blink border and sort image
