@@ -14,11 +14,12 @@ root.withdraw()
 # Supported image extensions
 image_extensions = (".jpg", ".jpeg", ".png", ".gif", ".bmp", ".tiff", ".tif", ".webp", ".ppm", ".pgm", ".pbm", ".pnm", ".sr", ".ras", ".jpe", ".jp2", ".j2k", ".jpf", ".jpx", ".jpm", ".mj2", ".svg", ".svgz", ".ico", ".cur", ".ani", ".tif", ".tiff", ".jfif", ".pjpeg", ".pjp")
 
-# Global variables to track images
+# Global variables 
 current_index = 0
 images = []
 selected_folder = ""
 border_frame = None
+counter_label = None
 
 # Function to select folder of photos to sort
 def select_folder():
@@ -73,7 +74,8 @@ def sort_image(destination_folder):
 
     # Remove image from list and display next image
     if images:
-        images.pop(current_index)
+        images.pop(current_index) 
+        update_counter()
     if current_index < len(images):
         image_path = os.path.join(selected_folder, "unsorted", images[current_index])
         display_image(image_path)
@@ -82,7 +84,7 @@ def sort_image(destination_folder):
         unsorted_folder = os.path.join(selected_folder, "unsorted")
         if os.path.exists(unsorted_folder) and not os.listdir(unsorted_folder):
             os.rmdir(unsorted_folder)
-            
+
         root.destroy()
 
 # Function to blink border and sort image
@@ -94,7 +96,6 @@ def blink_border_and_sort(destination_folder, blink_color):
 
     sort_image(destination_folder)
 
-
 # Function to bind keys to sorting actions
 def bind_keys():
     root.bind("<Left>", lambda event: blink_border_and_sort("no", "red"))      # Left arrow → no
@@ -103,6 +104,8 @@ def bind_keys():
     root.bind("<Down>", lambda event: blink_border_and_sort("maybe", "yellow"))   # Down arrow → maybe
     root.bind("<Escape>", lambda event: root.attributes("-fullscreen", not bool(root.attributes("-fullscreen")))) # Escape → toggle fullscreen
 
+def update_counter():
+    counter_label.config(text=f"Photos left: {len(images)}")
 
 # Main execution
 if __name__ == "__main__":
@@ -118,6 +121,10 @@ if __name__ == "__main__":
         # Create border frame
         border_frame = tk.Frame(root, bg="black", bd=12)
         border_frame.pack(fill="both", expand="yes") 
+        
+        # Create remaining photo counter label
+        counter_label = tk.Label(border_frame, text=f"Photos left: {len(images)}", bg="black", fg="white", font=("Helvetica", 16))
+        counter_label.place(x=10, y=10)
 
         # Display first image and begin sort loop
         if images:
