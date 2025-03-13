@@ -7,6 +7,8 @@ from PIL import Image, ImageTk
 # Create a global window
 root = tk.Tk()
 root.title('Lumet Sorter')
+root.config(bg="black") # Set background color to dark grey
+root.attributes("-fullscreen", True) # Set window to full screen by default
 root.withdraw()
 
 # Supported image extensions
@@ -16,6 +18,7 @@ image_extensions = (".jpg", ".jpeg", ".png", ".gif", ".bmp", ".tiff", ".tif", ".
 current_index = 0
 images = []
 selected_folder = ""
+border_frame = None
 
 # Function to select folder of photos to sort
 def select_folder():
@@ -53,7 +56,7 @@ def display_image(image_path):
 
     # Create a label to display image if not already created
     if not hasattr(root, "image_label"):
-        root.image_label = tk.Label(root)
+        root.image_label = tk.Label(border_frame, bg="black")
         root.image_label.pack(fill="both", expand="yes")
 
     # Display image
@@ -61,6 +64,7 @@ def display_image(image_path):
     root.image_label.image = photo # Keep a reference to avoid garbage collection
     root.deiconify()
 
+# Function to sort image
 def sort_image(destination_folder):
     global current_index
     source = os.path.join(selected_folder, "unsorted", images[current_index])
@@ -76,12 +80,24 @@ def sort_image(destination_folder):
     else:
         root.destroy()
 
+# Function to blink border and sort image
+def blink_border_and_sort(destination_folder, blink_color):
+    blink_duration = 500 # milliseconds
+
+    border_frame.config(bg=blink_color)
+    root.after(blink_duration, lambda: border_frame.config(bg="black"))
+
+    sort_image(destination_folder)
+
+
 # Function to bind keys to sorting actions
 def bind_keys():
-    root.bind("<Left>", lambda event: sort_image("no"))      # Left arrow → no
-    root.bind("<Right>", lambda event: sort_image("yes"))    # Right arrow → yes
-    root.bind("<Up>", lambda event: sort_image("maybe"))     # Up arrow → maybe
-    root.bind("<Down>", lambda event: sort_image("maybe"))   # Down arrow → maybe
+    root.bind("<Left>", lambda event: blink_border_and_sort("no", "red"))      # Left arrow → no
+    root.bind("<Right>", lambda event: blink_border_and_sort("yes", "green"))    # Right arrow → yes
+    root.bind("<Up>", lambda event: blink_border_and_sort("maybe", "yellow"))     # Up arrow → maybe
+    root.bind("<Down>", lambda event: blink_border_and_sort("maybe", "yellow"))   # Down arrow → maybe
+    root.bind("<Escape>", lambda event: root.attributes("-fullscreen", not bool(root.attributes("-fullscreen")))) # Escape → toggle fullscreen
+
 
 # Main execution
 if __name__ == "__main__":
@@ -93,6 +109,10 @@ if __name__ == "__main__":
         setup_folders(selected_folder)
         unsorted_folder = os.path.join(selected_folder, "unsorted")
         images = [f for f in os.listdir(unsorted_folder) if f.lower().endswith(image_extensions)]
+
+        # Create border frame
+        border_frame = tk.Frame(root, bg="black", bd=12)
+        border_frame.pack(fill="both", expand="yes") 
 
         # Display first image and begin sort loop
         if images:
