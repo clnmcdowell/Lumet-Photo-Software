@@ -64,6 +64,7 @@ def display_image(image_path):
     root.image_label.config(image=photo)
     root.image_label.image = photo # Keep a reference to avoid garbage collection
     root.deiconify()
+    counter_label.lift()  # Bring counter label to front
 
 # Function to sort image
 def sort_image(destination_folder):
